@@ -142,7 +142,7 @@ calling_prog=`basename "${calling_prog}"`  # get rid of any path that may be the
 # the new line correctly
 help_string=`sed 's,\[nl],\n ,g' <<< "${help_string}"`
 help_string="$( column -s '' -t <<< `printf "${help_string}"` )"  # use 'column' to format the help message nicely
-help_string="\n  usage: ${calling_prog} [options]\n\n${help_string}\n"  # add a "usage" line to the start of the help message...and the help message is now ready to be displayed to the user
+help_string="\n  usage: ${calling_prog} [options]\n\n${help_string}\n\n"  # add a "usage" line to the start of the help message...and the help message is now ready to be displayed to the user
 
 # 'getopt' words the error messages differently depending on whether it's a
 # short option or a long option, and whether it's an unknown option or an option
