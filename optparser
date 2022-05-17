@@ -130,7 +130,9 @@ done
 # counter used.  if not - again, something that should never happen - print an
 # error message and exit
 if [[ "${#names[@]}" != "${number_elements}" ]]; then optparser_error "Error: a fatal error occurred...quiting."; exit 25; fi
-longopts=${longopts%,}  # remove the unneeded "," from the end of 'longopts'
+shortopts+="h"
+longopts+="help"
+help_string+="  -h | --helpprint this help message.\n"
 calling_prog=`ps -o args= $PPID | cut -d ' ' -f 2`  # get the name of the program/script that called 'optparser', for use in the help message
 calling_prog=`basename "${calling_prog}"`  # get rid of any path that may be there
 
