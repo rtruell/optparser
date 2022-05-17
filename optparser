@@ -278,8 +278,8 @@ while true; do
     # the option doesn't require an argument, so assign '1' to its variable
     valuename="${valuename}=1"
   fi
-  # add the current option's variable and its argument/flag to the string to be
-  # returned to the calling program, and then 'shift' the option away
+  # add the current option's variable assignment to the string to be returned to
+  # the calling program, and then 'shift' the option away
   return_string+="${valuename} "
   shift
 done
