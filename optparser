@@ -55,6 +55,7 @@ if [[ "${?}" != 4 ]]; then optparser_error "A newer version of 'getopt' is requi
 # in 23 quite short lines, so I decided to give this way a try.  seems to work
 # OK, so I may continue doing things this way in the future :-)
 declare -a shorts=() longs=() types=() defaults=() names=() descripts=()
+declare -a optparser_options=()
 parsed="" shortunknown="" longunknown="" noarg="" shortnoarg="" longnoarg=""
 needsarg=0 option="" unknown="" remaining_args="" longopts="" shortopts=""
 valuename="" calling_prog="" help_string="" number_elements=0 return_string=""
@@ -71,6 +72,7 @@ shift  # since this positional parameter has been read, shift it away so the nex
 # short and/or long option lists for 'getopt', and building the help message
 for ((i = 0 ; i < ${#optparser_options[@]} ; i++)); do
   options="" short="" long="" name="" desc="" type="" default=""
+
   # 'read' reads in a line, splits it at spaces, and puts each "word" in the
   # variables provided.  if there are more "words" than variables provided,
   # the last variable get all the remaining "words" in the line.  so, for the
@@ -89,9 +91,11 @@ for ((i = 0 ; i < ${#optparser_options[@]} ; i++)); do
         long="${options}"  # otherwise it's a long option
       fi
     fi
+
     # just for completeness, check both 'short' and 'long' options...if they're
     # both empty - which should never happen - print an error message and exit
     if [[ "${short}" == "" && "${long}" == "" ]]; then optparser_error "Error: must supply a list of either short or long options."; exit 20; fi
+
     # the "argument type" and "default value" fields only exist if an option
     # requires an argument, and a "@" is the delimiter between the two
     if [[ "${short}" == *":"* ]]; then  # if 'short' contains a ":", then it requires an argument
@@ -106,6 +110,7 @@ for ((i = 0 ; i < ${#optparser_options[@]} ; i++)); do
       type=`printf '%s\n' "${default%%@*}"`  # extract the argument type
       default=`printf '%s\n' "${default##*@}"`  # remove the argument type, leaving the default value
     fi
+
     # now that the various parts of the options are split off, save them to
     # their respective arrays for later use
     shorts+=("${short}")
@@ -120,12 +125,13 @@ for ((i = 0 ; i < ${#optparser_options[@]} ; i++)); do
 
     # start building the help message
     help_string+="  -`printf '%s\n' "${short%%:*}"` | --`printf '%s\n' "${long%%:*}"`"  # if there's an ":" indicating a required argument, it's removed so options line up nicely ...
-    if [[ -n "${type}" ]]; then help_string+=" =${type}"; fi  # ... and is replaced by putting the argument type after the long option
+    if [[ -n "${type}" ]]; then help_string+=" <${type}>"; fi  # ... and is replaced by putting the argument type after the long option
     help_string+="${desc}"  # "" is used as a delimiter for 'column' to use to display the entire help message nicely
     if [[ -n "${type}" ]]; then help_string+="  ${type} is required."; fi  # if an argument is required say so ...
     if [[ -n "${default}" ]]; then help_string+="[nl](defaults to '${default}' if no value suppied on command line)\n"; else help_string+="\n"; fi  # ... and display the default value, if supplied
   done <<< "${optparser_options[${i}]}"
 done
+
 # check to make sure that the number of elements read in is the same as the
 # counter used.  if not - again, something that should never happen - print an
 # error message and exit
